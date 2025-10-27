@@ -41,6 +41,20 @@ LOG_MODULE_REGISTER(greybus_uart, CONFIG_GREYBUS_LOG_LEVEL);
 #define GB_UART_EVENT_PROTOCOL_ERROR 1
 #define GB_UART_EVENT_DEVICE_ERROR   2
 
+static void gb_uart_receive_credits(uint16_t cport, uint16_t count)
+{
+	struct gb_uart_receive_credits_request *req_data;
+	struct gb_message *msg =
+		gb_message_request_alloc(sizeof(*req_data), GB_UART_TYPE_RECEIVE_CREDITS, true);
+
+	req_data = (struct gb_uart_receive_credits_request *)msg->payload;
+
+	req_data->count = sys_cpu_to_le16(count);
+
+	gb_transport_message_send(msg, cport);
+	gb_message_dealloc(msg);
+}
+
 /**
  * @brief Protocol send data function.
  */
@@ -50,11 +64,16 @@ static void gb_uart_send_data(uint16_t cport, struct gb_message *req, const stru
 	const struct gb_uart_send_data_request *req_data =
 		(const struct gb_uart_send_data_request *)req->payload;
 
+	/* Success response does not signify that writing is done. So can be sent early */
+	gb_transport_message_empty_response_send_no_free(req, GB_OP_SUCCESS, cport);
+
 	for (i = 0; i < sys_le16_to_cpu(req_data->size); i++) {
 		uart_poll_out(dev, req_data->data[i]);
 	}
 
-	gb_transport_message_empty_response_send(req, GB_OP_SUCCESS, cport);
+	/* Send request to signal the number of bytes written */
+	gb_uart_receive_credits(cport, sys_le16_to_cpu(req_data->size));
+	gb_message_dealloc(req);
 }
 
 /**

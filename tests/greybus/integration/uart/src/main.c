@@ -32,6 +32,7 @@ ZTEST(greybus_uart_tests, test_send_data)
 	uint8_t buf[TX_DATA_SIZE];
 	struct gb_msg_with_cport resp;
 	struct gb_uart_send_data_request *req_data;
+	const struct gb_uart_receive_credits_request *req_credits_data;
 	struct gb_message *req = gb_message_request_alloc(sizeof(*req_data) + TX_DATA_SIZE,
 							  GB_UART_TYPE_SEND_DATA, false);
 
@@ -49,6 +50,19 @@ ZTEST(greybus_uart_tests, test_send_data)
 	zassert_equal(gb_message_type(resp.msg), GB_RESPONSE(GB_UART_TYPE_SEND_DATA),
 		      "Invalid response type");
 	zassert_equal(gb_message_payload_len(resp.msg), 0, "Invalid response size");
+
+	gb_message_dealloc(resp.msg);
+
+	/* Handle receive credits request */
+	resp = gb_transport_get_message();
+	zassert_equal(resp.cport, 1, "Invalid cport");
+	zassert_equal(gb_message_type(resp.msg), GB_UART_TYPE_RECEIVE_CREDITS,
+		      "Invalid response type");
+	zassert_equal(gb_message_payload_len(resp.msg), sizeof(*req_credits_data),
+		      "Invalid response size");
+	req_credits_data = (const struct gb_uart_receive_credits_request *)resp.msg->payload;
+	zassert_equal(sys_le16_to_cpu(req_credits_data->count), TX_DATA_SIZE,
+		      "Invalid receive credits request");
 
 	gb_message_dealloc(resp.msg);
 
