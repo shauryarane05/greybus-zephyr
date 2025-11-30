@@ -21,6 +21,13 @@ zephyr_library_sources_ifdef(
 	greybus_cport.c
 )
 
+# APBridge-specific files
+zephyr_library_sources_ifdef(
+	CONFIG_GREYBUS_APBRIDGE
+	apbridge.c
+	interfaces.c
+)
+
 if(CONFIG_GREYBUS_TLS_BUILTIN)
   set(gen_dir ${ZEPHYR_BINARY_DIR}/include/generated/)
 
