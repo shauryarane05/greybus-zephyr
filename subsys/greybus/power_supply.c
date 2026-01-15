@@ -67,7 +67,7 @@ static int event_callback(void *data, uint8_t psy_id, uint8_t event)
 	struct gb_power_supply_event_request *request;
 	struct gb_power_supply_info *info;
 
-	DEBUGASSERT(data);
+	__ASSERT(data != NULL, "data pointer is NULL");
 	info = data;
 
 	operation = gb_operation_create(info->cport, GB_POWER_SUPPLY_TYPE_EVENT, sizeof(*request));
@@ -126,7 +126,7 @@ static uint8_t gb_power_supply_get_supplies(struct gb_operation *operation)
 	uint8_t supplies_count = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	response = gb_operation_alloc_response(operation, sizeof(*response));
 	if (!response) {
@@ -158,7 +158,7 @@ static uint8_t gb_power_supply_get_description(struct gb_operation *operation)
 	int ret = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	request = gb_operation_get_request_payload(operation);
 
@@ -206,7 +206,7 @@ static uint8_t gb_power_supply_get_prop_descriptors(struct gb_operation *operati
 	uint8_t properties_count = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	request = gb_operation_get_request_payload(operation);
 
@@ -269,7 +269,7 @@ static uint8_t gb_power_supply_get_property(struct gb_operation *operation)
 	uint8_t property = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	request = gb_operation_get_request_payload(operation);
 
@@ -313,7 +313,7 @@ static uint8_t gb_power_supply_set_property(struct gb_operation *operation)
 	uint8_t property = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	request = gb_operation_get_request_payload(operation);
 
@@ -347,7 +347,7 @@ static int gb_power_supply_init(unsigned int cport, struct gb_bundle *bundle)
 	struct gb_power_supply_info *info;
 	int ret;
 
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	info = zalloc(sizeof(*info));
 	if (info == NULL) {
@@ -391,10 +391,10 @@ static void gb_power_supply_exit(unsigned int cport, struct gb_bundle *bundle)
 {
 	struct gb_power_supply_info *info;
 
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 	info = bundle->priv;
 
-	DEBUGASSERT(cport == info->cport);
+	__ASSERT(cport == info->cport, "cport mismatch");
 
 	device_power_supply_attach_callback(bundle->dev, NULL, NULL);
 

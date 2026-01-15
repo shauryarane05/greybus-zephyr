@@ -175,7 +175,7 @@ static uint8_t gb_hid_get_descriptor(struct gb_operation *operation)
 	int ret = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	hid_info = bundle->priv;
 
@@ -221,7 +221,7 @@ static uint8_t gb_hid_get_report_descriptor(struct gb_operation *operation)
 	int ret = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	hid_info = bundle->priv;
 
@@ -255,7 +255,7 @@ static uint8_t gb_hid_power_on(struct gb_operation *operation)
 	int ret = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	hid_info = bundle->priv;
 
@@ -284,7 +284,7 @@ static uint8_t gb_hid_power_off(struct gb_operation *operation)
 	int ret = 0;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	hid_info = bundle->priv;
 
@@ -323,7 +323,7 @@ static uint8_t gb_hid_get_report(struct gb_operation *operation)
 	bundle = gb_operation_get_bundle(operation);
 	request = gb_operation_get_request_payload(operation);
 
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	if (gb_operation_get_request_payload_size(operation) < sizeof(*request)) {
 		LOG_ERR("dropping short message");
@@ -378,7 +378,7 @@ static uint8_t gb_hid_set_report(struct gb_operation *operation)
 	bundle = gb_operation_get_bundle(operation);
 	request = gb_operation_get_request_payload(operation);
 
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	if (gb_operation_get_request_payload_size(operation) < sizeof(*request)) {
 		LOG_ERR("dropping short message");
@@ -422,7 +422,7 @@ static int hid_event_callback_routine(struct device *dev, void *data, uint8_t re
 	struct gb_hid_info *hid_info;
 	struct op_node *node;
 
-	DEBUGASSERT(data);
+	__ASSERT(data != NULL, "data pointer is NULL");
 	hid_info = data;
 
 	if (!hid_info->report_node) {
@@ -643,7 +643,7 @@ static int gb_hid_init(unsigned int cport, struct gb_bundle *bundle)
 	struct gb_hid_info *hid_info;
 	int ret;
 
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	hid_info = zalloc(sizeof(*hid_info));
 	if (!hid_info) {
@@ -704,7 +704,7 @@ static void gb_hid_exit(unsigned int cport, struct gb_bundle *bundle)
 {
 	struct gb_hid_info *hid_info;
 
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 	hid_info = bundle->priv;
 
 	if (!hid_info) {

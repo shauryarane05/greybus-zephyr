@@ -91,7 +91,7 @@ static int event_callback(void *data, uint8_t event)
 	struct gb_sdio_event_request *request;
 	struct gb_sdio_info *info;
 
-	DEBUGASSERT(data);
+	__ASSERT(data != NULL, "data pointer is NULL");
 	info = data;
 
 	operation = gb_operation_create(info->cport, GB_SDIO_TYPE_EVENT, sizeof(*request));
@@ -150,7 +150,7 @@ static uint8_t gb_sdio_protocol_get_capabilities(struct gb_operation *operation)
 	int ret;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	ret = device_sdio_get_capabilities(bundle->dev, &cap);
 	if (ret) {
@@ -205,7 +205,7 @@ static uint8_t gb_sdio_protocol_set_ios(struct gb_operation *operation)
 	int ret;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	request = gb_operation_get_request_payload(operation);
 
@@ -248,7 +248,7 @@ static uint8_t gb_sdio_protocol_command(struct gb_operation *operation)
 	int i, ret;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	request = gb_operation_get_request_payload(operation);
 
@@ -324,7 +324,7 @@ static uint8_t gb_sdio_protocol_transfer(struct gb_operation *operation)
 	int ret;
 
 	bundle = gb_operation_get_bundle(operation);
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	request = gb_operation_get_request_payload(operation);
 
@@ -388,7 +388,7 @@ static int gb_sdio_init(unsigned int cport, struct gb_bundle *bundle)
 	struct gb_sdio_info *info;
 	int ret;
 
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 
 	info = zalloc(sizeof(*info));
 	if (info == NULL) {
@@ -431,10 +431,10 @@ static void gb_sdio_exit(unsigned int cport, struct gb_bundle *bundle)
 {
 	struct gb_sdio_info *info;
 
-	DEBUGASSERT(bundle);
+	__ASSERT(bundle != NULL, "bundle is NULL");
 	info = bundle->priv;
 
-	DEBUGASSERT(cport == info->cport);
+	__ASSERT(cport == info->cport, "cport mismatch");
 
 	device_sdio_attach_callback(bundle->dev, NULL, NULL);
 

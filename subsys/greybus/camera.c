@@ -480,7 +480,7 @@ err_free_info:
  */
 static void gb_camera_exit(unsigned int cport, struct gb_bundle *bundle)
 {
-	DEBUGASSERT(cport == info->cport);
+	__ASSERT(cport == info->cport, "cport mismatch");
 
 	device_close(info->dev);
 
